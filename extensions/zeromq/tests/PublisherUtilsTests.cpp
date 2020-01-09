@@ -40,6 +40,6 @@ namespace catapult { namespace zeromq {
 		EXPECT_EQ_MEMORY(address.data(), &topic[1], Address::Size);
 
 		auto zeros = std::vector<uint8_t>(6, 0);
-		EXPECT_EQ_MEMORY(zeros.data(), &topic[26], 6u);
+		EXPECT_EQ_MEMORY(zeros.data(), &topic[26], zeros.size());
 	}
 }}
