@@ -26,17 +26,20 @@ namespace catapult { namespace zeromq {
 
 #define TEST_CLASS PublisherUtilsTests
 
-	TEST(TEST_CLASS, CanCreateTopic) {
+	TEST(TEST_CLASS, CanCreateAddressTopic) {
 		// Arrange:
 		TransactionMarker marker = TransactionMarker(0x37);
 		auto address = test::GenerateRandomUnresolvedAddress();
 
 		// Act:
-		auto topic = CreateTopic(marker, address);
+		auto topic = CreateAddressTopic(marker, address);
 
 		// Assert:
-		ASSERT_EQ(Address::Size + 1, topic.size());
+		ASSERT_EQ(32u, topic.size());
 		EXPECT_EQ(marker, TransactionMarker(topic[0]));
-		EXPECT_EQ_MEMORY(address.data(), topic.data() + 1, Address::Size);
+		EXPECT_EQ_MEMORY(address.data(), &topic[1], Address::Size);
+
+		auto zeros = std::vector<uint8_t>(6, 0);
+		EXPECT_EQ_MEMORY(zeros.data(), &topic[26], 6u);
 	}
 }}

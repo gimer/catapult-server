@@ -79,7 +79,7 @@ namespace catapult { namespace test {
 
 	void SubscribeForAddresses(zmq::socket_t& socket, zeromq::TransactionMarker marker, const model::UnresolvedAddressSet& addresses) {
 		for (const auto& address : addresses) {
-			auto topic = zeromq::CreateTopic(marker, address);
+			auto topic = zeromq::CreateAddressTopic(marker, address);
 			socket.setsockopt(ZMQ_SUBSCRIBE, topic.data(), topic.size());
 		}
 	}
@@ -102,9 +102,9 @@ namespace catapult { namespace test {
 
 		auto marker = zeromq::BlockMarker::Block_Marker;
 		AssertMessagePart(message[0], &marker, sizeof(marker));
-		AssertMessagePart(message[1], &blockElement.Block, sizeof(model::BlockHeader));
-		AssertMessagePart(message[2], &blockElement.EntityHash, Hash256::Size);
-		AssertMessagePart(message[3], &blockElement.GenerationHash, Hash256::Size);
+		AssertMessagePart(message[1], &blockElement.EntityHash, Hash256::Size);
+		AssertMessagePart(message[2], &blockElement.GenerationHash, Hash256::Size);
+		AssertMessagePart(message[3], &blockElement.Block, sizeof(model::BlockHeader));
 	}
 
 	void AssertDropBlocksMessage(const zmq::multipart_t& message, Height height) {
@@ -117,35 +117,35 @@ namespace catapult { namespace test {
 
 	void AssertTransactionElementMessage(
 			const zmq::multipart_t& message,
-			const std::vector<uint8_t>& topic,
+			const zeromq::AddressTopic& topic,
 			const model::TransactionElement& transactionElement,
 			Height height) {
 		ASSERT_EQ(5u, message.size());
 
 		const auto& transaction = transactionElement.Transaction;
 		AssertMessagePart(message[0], topic.data(), topic.size());
-		AssertMessagePart(message[1], &transaction, transaction.Size);
+		AssertMessagePart(message[1], &height, sizeof(Height));
 		AssertMessagePart(message[2], &transactionElement.EntityHash, Hash256::Size);
 		AssertMessagePart(message[3], &transactionElement.MerkleComponentHash, Hash256::Size);
-		AssertMessagePart(message[4], &height, sizeof(Height));
+		AssertMessagePart(message[4], &transaction, transaction.Size);
 	}
 
 	void AssertTransactionInfoMessage(
 			const zmq::multipart_t& message,
-			const std::vector<uint8_t>& topic,
+			const zeromq::AddressTopic& topic,
 			const model::TransactionInfo& transactionInfo,
 			Height height) {
 		ASSERT_EQ(5u, message.size());
 
 		const auto& transaction = *transactionInfo.pEntity;
 		AssertMessagePart(message[0], topic.data(), topic.size());
-		AssertMessagePart(message[1], &transaction, transaction.Size);
+		AssertMessagePart(message[1], &height, sizeof(Height));
 		AssertMessagePart(message[2], &transactionInfo.EntityHash, Hash256::Size);
 		AssertMessagePart(message[3], &transactionInfo.MerkleComponentHash, Hash256::Size);
-		AssertMessagePart(message[4], &height, sizeof(Height));
+		AssertMessagePart(message[4], &transaction, transaction.Size);
 	}
 
-	void AssertTransactionHashMessage(const zmq::multipart_t& message, const std::vector<uint8_t>& topic, const Hash256& hash) {
+	void AssertTransactionHashMessage(const zmq::multipart_t& message, const zeromq::AddressTopic& topic, const Hash256& hash) {
 		ASSERT_EQ(2u, message.size());
 
 		AssertMessagePart(message[0], topic.data(), topic.size());
@@ -154,7 +154,7 @@ namespace catapult { namespace test {
 
 	void AssertTransactionStatusMessage(
 			const zmq::multipart_t& message,
-			const std::vector<uint8_t>& topic,
+			const zeromq::AddressTopic& topic,
 			const model::TransactionStatus& transactionStatus) {
 		ASSERT_EQ(2u, message.size());
 
@@ -164,7 +164,7 @@ namespace catapult { namespace test {
 
 	void AssertDetachedCosignatureMessage(
 			const zmq::multipart_t& message,
-			const std::vector<uint8_t>& topic,
+			const zeromq::AddressTopic& topic,
 			const model::DetachedCosignature& detachedCosignature) {
 		ASSERT_EQ(2u, message.size());
 
@@ -188,7 +188,7 @@ namespace catapult { namespace test {
 			const auto& address = reinterpret_cast<const UnresolvedAddress&>(*pAddressData);
 			EXPECT_EQ(1u, addressesCopy.erase(address)) << "address " << address;
 
-			auto topic = CreateTopic(marker, address);
+			auto topic = zeromq::CreateAddressTopic(marker, address);
 			assertMessage(message, topic);
 		}
 

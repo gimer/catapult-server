@@ -25,6 +25,9 @@
 
 namespace catapult { namespace zeromq {
 
-	/// Creates a topic around \a marker and \a address.
-	std::vector<uint8_t> CreateTopic(TransactionMarker marker, const UnresolvedAddress& address);
+	struct AddressTopic_tag { static constexpr size_t Size = 32; };
+	using AddressTopic = utils::ByteArray<AddressTopic_tag>;
+
+	/// Creates an address topic around \a marker and \a address.
+	AddressTopic CreateAddressTopic(TransactionMarker marker, const UnresolvedAddress& address);
 }}

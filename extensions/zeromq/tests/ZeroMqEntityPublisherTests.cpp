@@ -235,7 +235,7 @@ namespace catapult { namespace zeromq {
 		test::ZmqReceive(message, context.zmqSocket());
 
 		// - only a single message is sent to the recipient address (because that is the only subscribed address)
-		auto topic = CreateTopic(Marker, unresolvedRecipientAddress);
+		auto topic = CreateAddressTopic(Marker, unresolvedRecipientAddress);
 		test::AssertTransactionInfoMessage(message, topic, transactionInfo, height);
 
 		// - no other message is pending (e.g. to sender)

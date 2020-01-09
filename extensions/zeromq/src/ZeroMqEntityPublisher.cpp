@@ -145,9 +145,9 @@ namespace catapult { namespace zeromq {
 		zmq::multipart_t multipart;
 		auto marker = BlockMarker::Block_Marker;
 		multipart.addmem(&marker, sizeof(marker));
-		multipart.addmem(static_cast<const void*>(&blockElement.Block), sizeof(model::BlockHeader));
 		multipart.addmem(static_cast<const void*>(&blockElement.EntityHash), Hash256::Size);
 		multipart.addmem(static_cast<const void*>(&blockElement.GenerationHash), Hash256::Size);
+		multipart.addmem(static_cast<const void*>(&blockElement.Block), sizeof(model::BlockHeader));
 		pMessageGroup->add(std::move(multipart));
 		m_pSynchronizedPublisher->queue(std::move(pMessageGroup));
 	}
@@ -200,10 +200,10 @@ namespace catapult { namespace zeromq {
 			Height height) {
 		publish("transaction", topicMarker, transactionInfo, [&transactionInfo, height](auto& multipart) {
 			const auto& transaction = transactionInfo.Transaction;
-			multipart.addmem(static_cast<const void*>(&transaction), transaction.Size);
+			multipart.addtyp(height);
 			multipart.addmem(static_cast<const void*>(&transactionInfo.EntityHash), Hash256::Size);
 			multipart.addmem(static_cast<const void*>(&transactionInfo.MerkleComponentHash), Hash256::Size);
-			multipart.addtyp(height);
+			multipart.addmem(static_cast<const void*>(&transaction), transaction.Size);
 		});
 	}
 
@@ -242,7 +242,7 @@ namespace catapult { namespace zeromq {
 
 		for (const auto& address : addresses) {
 			zmq::multipart_t multipart;
-			auto topic = CreateTopic(topicMarker, address);
+			auto topic = CreateAddressTopic(topicMarker, address);
 			multipart.addmem(topic.data(), topic.size());
 			payloadBuilder(multipart);
 			pMessageGroup->add(std::move(multipart));

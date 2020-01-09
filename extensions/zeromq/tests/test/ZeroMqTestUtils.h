@@ -19,6 +19,7 @@
 **/
 
 #pragma once
+#include "zeromq/src/PublisherUtils.h"
 #include "zeromq/src/ZeroMqEntityPublisher.h"
 #include "catapult/model/ContainerTypes.h"
 #include "catapult/model/NotificationPublisher.h"
@@ -45,7 +46,7 @@ namespace catapult {
 
 namespace catapult { namespace test {
 
-	using AssertMessage = consumer<const zmq::multipart_t&, const std::vector<uint8_t>&>;
+	using AssertMessage = consumer<const zmq::multipart_t&, const zeromq::AddressTopic&>;
 
 	/// Converts a given \a transaction to a mock transaction.
 	const mocks::MockTransaction& ToMockTransaction(const model::Transaction& transaction);
@@ -77,30 +78,30 @@ namespace catapult { namespace test {
 	/// Asserts that the given \a message has \a topic as first part and matches the data in \a transactionElement and \a height.
 	void AssertTransactionElementMessage(
 			const zmq::multipart_t& message,
-			const std::vector<uint8_t>& topic,
+			const zeromq::AddressTopic& topic,
 			const model::TransactionElement& transactionElement,
 			Height height);
 
 	/// Asserts that the given \a message has \a topic as first part and matches the data in \a transactionInfo and \a height.
 	void AssertTransactionInfoMessage(
 			const zmq::multipart_t& message,
-			const std::vector<uint8_t>& topic,
+			const zeromq::AddressTopic& topic,
 			const model::TransactionInfo& transactionInfo,
 			Height height);
 
 	/// Asserts that the given \a message has \a topic as first part and matches the data in \a hash.
-	void AssertTransactionHashMessage(const zmq::multipart_t& message, const std::vector<uint8_t>& topic, const Hash256& hash);
+	void AssertTransactionHashMessage(const zmq::multipart_t& message, const zeromq::AddressTopic& topic, const Hash256& hash);
 
 	/// Asserts that the given \a message has \a topic as first part and matches the data in \a transactionStatus.
 	void AssertTransactionStatusMessage(
 			const zmq::multipart_t& message,
-			const std::vector<uint8_t>& topic,
+			const zeromq::AddressTopic& topic,
 			const model::TransactionStatus& transactionStatus);
 
 	/// Asserts that the given \a message has \a topic as first part and matches the data in \a detachedCosignature.
 	void AssertDetachedCosignatureMessage(
 			const zmq::multipart_t& message,
-			const std::vector<uint8_t>& topic,
+			const zeromq::AddressTopic& topic,
 			const model::DetachedCosignature& detachedCosignature);
 
 	/// Asserts that all pending messages of the socket (\a zmqSocket) that are subscribed to the topic composed of
