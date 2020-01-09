@@ -31,19 +31,19 @@ namespace catapult { namespace model {
 		/// Creates a TransactionStatus around \a hash, \a status and \a deadline.
 		TransactionStatus(const Hash256& hash, uint32_t status, catapult::Timestamp deadline)
 				: Hash(hash)
-				, Status(status)
 				, Deadline(deadline)
+				, Status(status)
 		{}
 
 	public:
 		/// Transaction hash.
 		Hash256 Hash;
 
-		/// Raw status code.
-		uint32_t Status;
-
 		/// Deadline.
 		catapult::Timestamp Deadline;
+
+		/// Raw status code.
+		uint32_t Status;
 
 	public:
 		/// Returns \c true if this transaction status is equal to \a rhs.

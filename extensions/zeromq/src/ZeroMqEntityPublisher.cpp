@@ -200,9 +200,9 @@ namespace catapult { namespace zeromq {
 			Height height) {
 		publish("transaction", topicMarker, transactionInfo, [&transactionInfo, height](auto& multipart) {
 			const auto& transaction = transactionInfo.Transaction;
-			multipart.addtyp(height);
 			multipart.addmem(static_cast<const void*>(&transactionInfo.EntityHash), Hash256::Size);
 			multipart.addmem(static_cast<const void*>(&transactionInfo.MerkleComponentHash), Hash256::Size);
+			multipart.addtyp(height);
 			multipart.addmem(static_cast<const void*>(&transaction), transaction.Size);
 		});
 	}

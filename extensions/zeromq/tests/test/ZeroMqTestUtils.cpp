@@ -124,9 +124,9 @@ namespace catapult { namespace test {
 
 		const auto& transaction = transactionElement.Transaction;
 		AssertMessagePart(message[0], topic.data(), topic.size());
-		AssertMessagePart(message[1], &height, sizeof(Height));
-		AssertMessagePart(message[2], &transactionElement.EntityHash, Hash256::Size);
-		AssertMessagePart(message[3], &transactionElement.MerkleComponentHash, Hash256::Size);
+		AssertMessagePart(message[1], &transactionElement.EntityHash, Hash256::Size);
+		AssertMessagePart(message[2], &transactionElement.MerkleComponentHash, Hash256::Size);
+		AssertMessagePart(message[3], &height, sizeof(Height));
 		AssertMessagePart(message[4], &transaction, transaction.Size);
 	}
 
@@ -139,9 +139,9 @@ namespace catapult { namespace test {
 
 		const auto& transaction = *transactionInfo.pEntity;
 		AssertMessagePart(message[0], topic.data(), topic.size());
-		AssertMessagePart(message[1], &height, sizeof(Height));
-		AssertMessagePart(message[2], &transactionInfo.EntityHash, Hash256::Size);
-		AssertMessagePart(message[3], &transactionInfo.MerkleComponentHash, Hash256::Size);
+		AssertMessagePart(message[1], &transactionInfo.EntityHash, Hash256::Size);
+		AssertMessagePart(message[2], &transactionInfo.MerkleComponentHash, Hash256::Size);
+		AssertMessagePart(message[3], &height, sizeof(Height));
 		AssertMessagePart(message[4], &transaction, transaction.Size);
 	}
 
