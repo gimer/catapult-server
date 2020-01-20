@@ -17,6 +17,18 @@ lib\low\KeccakP-1600\Optimized64\KeccakP-1600-opt64.c
 lib\low\KeccakP-1600\Optimized64\KeccakP-1600-SnP.h
 lib\low\KeccakP-1600\Optimized64\ufull\KeccakP-1600-opt64-config.h
 
+kmac
+lib\high\Keccak\SP800-185\SP800-185.c
+lib\high\Keccak\SP800-185\SP800-185.h
+lib\high\Keccak\SP800-185\SP800-185.inc
+lib\high\common\Phases.h
+lib\low\KeccakP-1600-times2\SIMD128\KeccakP-1600-times2-SnP.h
+lib\low\KeccakP-1600-times2\SIMD128\SSE2ufull\SIMD128-config.h
+lib\low\KeccakP-1600-times2\SIMD128\KeccakP-1600-times2-SIMD128.c
+lib\low\KeccakP-1600-times4\FallbackOn2\KeccakP-1600-times4-on2.c
+lib\low\KeccakP-1600-times4\FallbackOn2\KeccakP-1600-times4-SnP.h
+lib\low\KeccakP-1600-times8\FallbackOn4\KeccakP-1600-times8-on4.c
+lib\low\KeccakP-1600-times8\FallbackOn4\KeccakP-1600-times8-SnP.h
 
 ripemd160 - MIT BSD, implementation of the ripemd160 algorithm:
 https://github.com/rustyrussell/ccan.git 7082f7d0e81911acb26787949c251dfb298cbdd8
