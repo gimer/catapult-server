@@ -471,6 +471,90 @@ namespace catapult { namespace crypto {
 
 	// endregion
 
+	// region Kmac tests
+
+	// data from: https://csrc.nist.gov/CSRC/media/Projects/Cryptographic-Standards-and-Guidelines/documents/examples/KMAC_samples.pdf
+	// this test is redundant since similar test is inside keccak package, but provided for completeness
+
+	TEST(Kmac_256, SampleTestVector_4) {
+		// Arrange:
+		auto key = test::HexStringToVector("404142434445464748494A4B4C4D4E4F505152535455565758595A5B5C5D5E5F");
+		auto data = test::HexStringToVector("00010203");
+		Hash512 output;
+
+		// Act:
+		Kmac_256(key, data, output, "My Tagged Application");
+
+		// Assert:
+		auto expected = std::string(
+				"20C570C31346F703C9AC36C61C03CB64C3970D0CFC787E9B79599D273A68D2F7"
+				"F69D4CC3DE9D104A351689F27CF6F5951F0103F33F4F24871024D9C27773A8DD");
+		EXPECT_EQ(utils::ParseByteArray<Hash512>(expected), output);
+	}
+
+	TEST(Kmac_256, SampleTestVector_5) {
+		// Arrange:
+		auto key = test::HexStringToVector("404142434445464748494A4B4C4D4E4F505152535455565758595A5B5C5D5E5F");
+		std::vector<uint8_t> data;
+		for (uint8_t i = 0; i < 0xC8; ++i)
+			data.push_back(i);
+
+		Hash512 output;
+
+		// Act:
+		Kmac_256(key, data, output, "");
+
+		// Assert:
+		auto expected = std::string(
+				"75358CF39E41494E949707927CEE0AF20A3FF553904C86B08F21CC414BCFD691"
+				"589D27CF5E15369CBBFF8B9A4C2EB17800855D0235FF635DA82533EC6B759B69");
+		EXPECT_EQ(utils::ParseByteArray<Hash512>(expected), output);
+	}
+
+	TEST(Kmac_256, SampleTestVector_6) {
+		// Arrange:
+		auto key = test::HexStringToVector("404142434445464748494A4B4C4D4E4F505152535455565758595A5B5C5D5E5F");
+		std::vector<uint8_t> data;
+		for (uint8_t i = 0; i < 0xC8; ++i)
+			data.push_back(i);
+
+		Hash512 output;
+
+		// Act:
+		Kmac_256(key, data, output, "My Tagged Application");
+
+		// Assert:
+		auto expected = std::string(
+				"B58618F71F92E1D56C1B8C55DDD7CD188B97B4CA4D99831EB2699A837DA2E4D9"
+				"70FBACFDE50033AEA585F1A2708510C32D07880801BD182898FE476876FC8965");
+		EXPECT_EQ(utils::ParseByteArray<Hash512>(expected), output);
+	}
+
+	// "otherwise, output an error indicator and exit this process without performing the remaining actions"
+	TEST(Kmac_256, ThrowsWhenOutputBufferSizeIsZero) {
+		// Arrange:
+		auto key = test::HexStringToVector("404142434445464748494A4B4C4D4E4F505152535455565758595A5B5C5D5E5F");
+		auto data = test::HexStringToVector("00010203");
+		Hash512 output;
+
+		// Act + Assert:
+		EXPECT_THROW(Kmac_256(key, data, { output.data(), 0 }, "My Tagged Application"), catapult_invalid_argument);
+	}
+
+	// "If reps > (2^32 −1), then output an error indicator and exit this process without performing the remaining actions"
+	TEST(Kmac_256, ThrowsWhenNumberOfRepetitionsIsTooLarge) {
+		// Arrange:
+		auto key = test::HexStringToVector("404142434445464748494A4B4C4D4E4F505152535455565758595A5B5C5D5E5F");
+		auto data = test::HexStringToVector("00010203");
+		Hash512 output;
+
+		// Act + Assert:
+		auto largeSize = 0x1'0000'0000 * Hash512::Size / 8;
+		EXPECT_THROW(Kmac_256(key, data, { output.data(), largeSize }, "My Tagged Application"), catapult_invalid_argument);
+	}
+
+	// endregion
+
 	// region Sha3 builder - utils
 
 	namespace {

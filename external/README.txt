@@ -22,9 +22,9 @@ lib\high\Keccak\SP800-185\SP800-185.c
 lib\high\Keccak\SP800-185\SP800-185.h
 lib\high\Keccak\SP800-185\SP800-185.inc
 lib\high\common\Phases.h
-lib\low\KeccakP-1600-times2\SIMD128\KeccakP-1600-times2-SnP.h
-lib\low\KeccakP-1600-times2\SIMD128\SSE2ufull\SIMD128-config.h
-lib\low\KeccakP-1600-times2\SIMD128\KeccakP-1600-times2-SIMD128.c
+lib\low\common\PlSnP-Fallback.inc
+lib\low\KeccakP-1600-times2\FallbackOn1\KeccakP-1600-times2-on1.c
+lib\low\KeccakP-1600-times2\FallbackOn1\KeccakP-1600-times2-SnP.h
 lib\low\KeccakP-1600-times4\FallbackOn2\KeccakP-1600-times4-on2.c
 lib\low\KeccakP-1600-times4\FallbackOn2\KeccakP-1600-times4-SnP.h
 lib\low\KeccakP-1600-times8\FallbackOn4\KeccakP-1600-times8-on4.c

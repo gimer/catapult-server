@@ -98,6 +98,17 @@ namespace catapult { namespace crypto {
 		HashSingleBuffer<Keccak_512_Builder>(dataBuffer, hash);
 	}
 
+	void Kmac_256(const RawBuffer& key, const RawBuffer& input, const MutableRawBuffer& output, const RawString& customizationString) {
+		if (output.Size > 64 * 0xFFFF'FFFF)
+			CATAPULT_THROW_INVALID_ARGUMENT("invalid argument passed");
+
+		if (KMAC256(
+					key.pData, key.Size * 8,
+					input.pData, input.Size * 8,
+					output.pData, output.Size * 8,
+					reinterpret_cast<const uint8_t*>(customizationString.pData), customizationString.Size * 8))
+			CATAPULT_THROW_INVALID_ARGUMENT("invalid argument passed");
+	}
 	// endregion
 
 	// region sha3 / keccak builders

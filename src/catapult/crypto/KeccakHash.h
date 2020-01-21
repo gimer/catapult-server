@@ -31,6 +31,7 @@
 
 extern "C" {
 #include <sha3/KeccakHash.h>
+#include <sha3/SP800-185.h>
 }
 
 #ifdef __clang__
