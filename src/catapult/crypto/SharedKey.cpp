@@ -61,7 +61,7 @@ namespace catapult { namespace crypto {
 
 	namespace {
 		template<typename TByteArray>
-		void Kmac256Kdf_Impl(const SharedSecret& sharedSecret, const std::array<uint8_t, 132>& salt, TByteArray& output) {
+		void KdfSp800_56C_Kmac256_Impl(const SharedSecret& sharedSecret, const std::array<uint8_t, 132>& salt, TByteArray& output) {
 			std::array<uint8_t, SharedSecret::Size + sizeof(uint32_t)> buffer;
 			size_t repetitions = (output.size() + Hash256::Size - 1) / Hash256::Size;
 
@@ -71,7 +71,7 @@ namespace catapult { namespace crypto {
 				std::memcpy(&buffer[sizeof(uint32_t)], sharedSecret.data(), SharedSecret::Size);
 
 				Hash256 hash;
-				Kmac_256(salt, sharedSecret, hash, "KDF");
+				Kmac256(salt, sharedSecret, hash, "KDF");
 
 				auto written = std::min(output.size() - position, Hash256::Size);
 				std::memcpy(&output[position], hash.data(), written);
@@ -79,9 +79,9 @@ namespace catapult { namespace crypto {
 		}
 	}
 
-	void Kmac256Kdf(const SharedSecret& sharedSecret, SharedKey& output) {
+	void KdfSp800_56C_Kmac256(const SharedSecret& sharedSecret, SharedKey& output) {
 		std::array<uint8_t, 132> salt{};
-		Kmac256Kdf_Impl(sharedSecret, salt, output);
+		KdfSp800_56C_Kmac256_Impl(sharedSecret, salt, output);
 	}
 
 	namespace {

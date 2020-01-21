@@ -98,7 +98,48 @@ namespace catapult { namespace crypto {
 		HashSingleBuffer<Keccak_512_Builder>(dataBuffer, hash);
 	}
 
-	void Kmac_256(const RawBuffer& key, const RawBuffer& input, const MutableRawBuffer& output, const RawString& customizationString) {
+	namespace {
+		struct Sha256_Block_tag { static constexpr size_t Size = 64; };
+		using Sha256_Block = utils::ByteArray<Sha256_Block_tag>;
+	}
+
+	void Hmac_Sha256(const RawBuffer& key,  const RawBuffer& input, Hash256& output) {
+		crypto_hash_sha256_state state;
+		// zero-initialized by default
+		Sha256_Block innerKeyPad;
+		Sha256_Block outerKeyPad;
+
+		if (key.Size > Sha256_Block::Size) {
+			Hash256 tempKey;
+			Sha256(state, key, tempKey);
+			std::memcpy(innerKeyPad.data(), tempKey.data(), Hash256::Size);
+		} else {
+			std::memcpy(innerKeyPad.data(), key.pData, key.Size);
+		}
+
+		std::memcpy(outerKeyPad.data(), innerKeyPad.data(), Hash256::Size);
+
+		for (auto i = 0u; i < Sha256_Block::Size; ++i) {
+			innerKeyPad[i] ^= 0x36;
+			outerKeyPad[i] ^= 0x5C;
+		}
+
+		crypto_hash_sha256_state outerState;
+		crypto_hash_sha256_state innerState;
+		crypto_hash_sha256_init(&outerState);
+		crypto_hash_sha256_init(&innerState);
+
+		Hash256 innerHash;
+		crypto_hash_sha256_update(&innerState, innerKeyPad.data(), Sha256_Block::Size);
+		crypto_hash_sha256_update(&innerState, input.pData, input.Size);
+		crypto_hash_sha256_final(&innerState, innerHash.data());
+
+		crypto_hash_sha256_update(&outerState, outerKeyPad.data(), Sha256_Block::Size);
+		crypto_hash_sha256_update(&outerState, innerHash.data(), innerHash.size());
+		crypto_hash_sha256_final(&outerState, output.data());
+	}
+
+	void Kmac256(const RawBuffer& key, const RawBuffer& input, const MutableRawBuffer& output, const RawString& customizationString) {
 		if (output.Size > 64 * 0xFFFF'FFFF)
 			CATAPULT_THROW_INVALID_ARGUMENT("invalid argument passed");
 

@@ -32,8 +32,9 @@ namespace catapult { namespace crypto {
 	struct SharedKey_tag { static constexpr size_t Size = 32; };
 	using SharedKey = utils::ByteArray<SharedKey_tag>;
 
-	/// Generates \a sharedKey from \a sharedSecret.
-	void Kmac256KDF(const SharedSecret& sharedSecret, SharedKey& sharedKey);
+	/// Generates \a sharedKey from \a sharedSecret using zero salt.
+	/// \note: as defined in NIST SP 800-56C r1
+	void KdfSp800_56C_Kmac256(const SharedSecret& sharedSecret, SharedKey& sharedKey);
 
 	/// Generates shared key using \a keyPair, \a otherPublicKey and \a salt.
 	SharedKey DeriveSharedKey(const KeyPair& keyPair, const Key& otherPublicKey, const Salt& salt);
