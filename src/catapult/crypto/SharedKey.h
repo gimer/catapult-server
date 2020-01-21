@@ -36,6 +36,12 @@ namespace catapult { namespace crypto {
 	/// \note: as defined in NIST SP 800-56C r1
 	void KdfSp800_56C_Kmac256(const SharedSecret& sharedSecret, SharedKey& sharedKey);
 
+	void KdfSp800_56C_Hmac_Sha256(
+			const std::vector<uint8_t>& sharedSecret,
+			const std::vector<uint8_t>& salt,
+			std::vector<uint8_t>& output,
+			const std::vector<uint8_t>& label);
+
 	/// Generates shared key using \a keyPair, \a otherPublicKey and \a salt.
 	SharedKey DeriveSharedKey(const KeyPair& keyPair, const Key& otherPublicKey, const Salt& salt);
 }}
