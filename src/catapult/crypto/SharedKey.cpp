@@ -60,6 +60,31 @@ extern "C" {
 namespace catapult { namespace crypto {
 
 	namespace {
+		template<typename TByteArray>
+		void Kmac256Kdf_Impl(const SharedSecret& sharedSecret, const std::array<uint8_t, 132>& salt, TByteArray& output) {
+			std::array<uint8_t, SharedSecret::Size + sizeof(uint32_t)> buffer;
+			size_t repetitions = (output.size() + Hash256::Size - 1) / Hash256::Size;
+
+			size_t position = 0;
+			for (uint32_t counter = 1; counter <= repetitions; ++counter) {
+				std::memcpy(buffer.data(), &counter, sizeof(uint32_t));
+				std::memcpy(&buffer[sizeof(uint32_t)], sharedSecret.data(), SharedSecret::Size);
+
+				Hash256 hash;
+				Kmac_256(salt, sharedSecret, hash, "KDF");
+
+				auto written = std::min(output.size() - position, Hash256::Size);
+				std::memcpy(&output[position], hash.data(), written);
+			}
+		}
+	}
+
+	void Kmac256Kdf(const SharedSecret& sharedSecret, SharedKey& output) {
+		std::array<uint8_t, 132> salt{};
+		Kmac256Kdf_Impl(sharedSecret, salt, output);
+	}
+
+	namespace {
 		// region byte / byte array helpers
 
 		uint8_t IsNegative(int8_t b) {
